@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="ru"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>DevTools</title>
+<title>DevTools · CodeTeam</title>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#4f46e5"><link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="DevTools">
 <style>
 :root{--bg:#fff;--fg:#1a1a1a;--card:#f2f2f4;--ac:#2563eb;--bd:#d6d6dc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111214;--fg:#eee;--card:#1d1f23;--ac:#5b8cff;--bd:#33363c}}
@@ -82,6 +84,12 @@ table{width:100%;border-collapse:collapse;font-size:12px}td,th{border-bottom:1px
 .card span{display:block;font-size:28px;margin-bottom:4px;animation:float 2.4s ease-in-out infinite}
 .qk{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
 .proj{list-style:none;padding:0!important}.proj li{padding:6px 0;border-bottom:1px solid var(--bd)}
+.res{position:relative}.res pre{padding-right:50px}
+#copy{position:absolute;top:6px;right:6px;padding:4px 10px}
+#cnt{font-size:12px;opacity:.7;margin:-4px 0 8px}
+.tag{font-size:12px;padding:4px 9px;border-radius:99px;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:560px;margin:auto;background:#d92d20;color:#fff;padding:12px 14px;border-radius:10px;opacity:0;transform:translateY(12px);pointer-events:none;transition:.25s;z-index:30;font-size:14px}
+#toast.show{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
 <div class="top"><button id="burger" aria-label="Меню">☰</button><div class="brand"><b>🛠 DevTools</b><br><small>by hhhggtgy</small></div><span class="ver">v1.2</span></div>
@@ -93,11 +101,10 @@ table{width:100%;border-collapse:collapse;font-size:12px}td,th{border-bottom:1px
 <div id="dr"><div class="bg" id="drbg"></div><nav id="drnav"><div class="mhead">🛠 DevTools <span class="ver">v1.2</span><br><small>by hhhggtgy</small></div></nav></div>
 <div class="tabs" id="tabs"></div>
 <div class="hero" id="hero"></div>
-<div id="std"><textarea id="inp" placeholder="Ввод"></textarea>
+<div id="std"><div class="row"><button id="paste">📋 Вставить</button><button id="clr">✕ Очистить</button></div><textarea id="inp" placeholder="Ввод"></textarea><div id="cnt">Символов: 0</div>
 <input id="ext" style="display:none">
-<div class="row" id="acts"></div>
-<pre id="out">Результат появится тут</pre>
-<button id="copy">Копировать результат</button></div>
+<div class="row" id="acts"></div><div class="row" id="hist"></div>
+<div class="res"><pre id="out">Результат появится тут</pre><button id="copy" aria-label="Копировать результат">⧉</button></div></div>
 <div id="cons"><div class="tbar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><span>hhhggtgy@devtools:~</span></div><svg class="rain" viewBox="0 0 400 56" preserveAspectRatio="none" aria-hidden="true"><text class="rc" style="animation-delay:-0.2s" x="12" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">&gt;<tspan x="12" dy="11">{</tspan><tspan x="12" dy="11">#</tspan><tspan x="12" dy="11">0</tspan></text><text class="rc" style="animation-delay:-2.9s" x="36" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">$<tspan x="36" dy="11">1</tspan><tspan x="36" dy="11">&gt;</tspan><tspan x="36" dy="11">0</tspan></text><text class="rc" style="animation-delay:-1.3s" x="60" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">}<tspan x="60" dy="11">0</tspan><tspan x="60" dy="11">1</tspan><tspan x="60" dy="11">#</tspan></text><text class="rc" style="animation-delay:-0.2s" x="84" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">}<tspan x="84" dy="11">1</tspan><tspan x="84" dy="11">$</tspan><tspan x="84" dy="11">#</tspan></text><text class="rc" style="animation-delay:-0.2s" x="108" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">1<tspan x="108" dy="11">}</tspan><tspan x="108" dy="11">0</tspan><tspan x="108" dy="11">#</tspan></text><text class="rc" style="animation-delay:-0.9s" x="132" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">}<tspan x="132" dy="11">0</tspan><tspan x="132" dy="11">$</tspan><tspan x="132" dy="11">{</tspan></text><text class="rc" style="animation-delay:-1.8s" x="156" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">{<tspan x="156" dy="11">$</tspan><tspan x="156" dy="11">1</tspan><tspan x="156" dy="11">&lt;</tspan></text><text class="rc" style="animation-delay:-0.3s" x="180" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">{<tspan x="180" dy="11">1</tspan><tspan x="180" dy="11">}</tspan><tspan x="180" dy="11">&gt;</tspan></text><text class="rc" style="animation-delay:-2.2s" x="204" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">1<tspan x="204" dy="11">0</tspan><tspan x="204" dy="11">}</tspan><tspan x="204" dy="11">;</tspan></text><text class="rc" style="animation-delay:-1.2s" x="228" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">#<tspan x="228" dy="11">&gt;</tspan><tspan x="228" dy="11">;</tspan><tspan x="228" dy="11">;</tspan></text><text class="rc" style="animation-delay:-1.8s" x="252" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">}<tspan x="252" dy="11">{</tspan><tspan x="252" dy="11">}</tspan><tspan x="252" dy="11">1</tspan></text><text class="rc" style="animation-delay:-0.9s" x="276" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">$<tspan x="276" dy="11">;</tspan><tspan x="276" dy="11">&gt;</tspan><tspan x="276" dy="11">;</tspan></text><text class="rc" style="animation-delay:-0.5s" x="300" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">1<tspan x="300" dy="11">1</tspan><tspan x="300" dy="11">$</tspan><tspan x="300" dy="11">#</tspan></text><text class="rc" style="animation-delay:-0.1s" x="324" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">&gt;<tspan x="324" dy="11">{</tspan><tspan x="324" dy="11">;</tspan><tspan x="324" dy="11">#</tspan></text><text class="rc" style="animation-delay:-2.2s" x="348" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">1<tspan x="348" dy="11">$</tspan><tspan x="348" dy="11">&gt;</tspan><tspan x="348" dy="11">&gt;</tspan></text><text class="rc" style="animation-delay:-3.0s" x="372" y="8" font-size="11" fill="#7CFC9A" font-family="ui-monospace,monospace">;<tspan x="372" dy="11">;</tspan><tspan x="372" dy="11">1</tspan><tspan x="372" dy="11">1</tspan></text><text x="200" y="35" text-anchor="middle" font-size="20" font-weight="700" fill="#7CFC9A" font-family="ui-monospace,monospace" stroke="#0b0e12" stroke-width="4" paint-order="stroke">hhhggtgy</text></svg><div id="clog"></div><input id="cin" placeholder="JS-команда или help" autocomplete="off" autocapitalize="off"><div class="row"><button class="go" id="crun">Выполнить</button><button id="cclr">Очистить</button></div></div>
 
 <div id="about"><svg class="art" viewBox="0 0 400 150" aria-hidden="true"><defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs>
@@ -119,6 +126,7 @@ table{width:100%;border-collapse:collapse;font-size:12px}td,th{border-bottom:1px
 <p><button class="go" id="alias">Скопировать псевдоним <span class="heart">❤</span></button></p>
 <p style="opacity:.7;font-size:13px">Если сайт пригодился, расскажи о нём друзьям и упомяни hhhggtgy.</p></div>
 
+<div id="toast"></div>
 <script>
 const enc=new TextEncoder(),hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
 const T={
@@ -156,10 +164,21 @@ const cs=n==='Консоль',vs=n==='Посетители';$('std').style.displ
 $('ext').style.display=t.x?'block':'none';$('ext').placeholder=t.x||'';
 $('acts').innerHTML='';
 for(const k in t.a){const b=document.createElement('button');b.className='go';b.textContent=k;
-b.onclick=async()=>{try{$('out').textContent=await t.a[k]($('inp').value,$('ext').value);pop()}catch(e){$('out').textContent='Ошибка: '+e.message}};
+b.onclick=async()=>{try{$('out').textContent=await t.a[k]($('inp').value,$('ext').value);pop();saveH($('inp').value)}catch(e){const m=errMsg(e);$('out').textContent='Ошибка: '+m;toast('Ошибка: '+m)}};
 $('acts').appendChild(b)}}
 for(const n in T){const b=document.createElement('button');b.textContent=n;b.onclick=()=>pick(n);$('tabs').appendChild(b)}
-$('copy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText($('out').textContent).catch(()=>{})};
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('show'),3000)}
+function errMsg(e){if(e instanceof URIError)return 'некорректный формат ссылки';if(e&&e.name==='InvalidCharacterError')return 'некорректный Base64';if(e instanceof SyntaxError)return 'некорректный JSON или выражение';return(e&&e.message)||'что-то пошло не так'}
+function upd(){$('cnt').textContent='Символов: '+$('inp').value.length}
+$('inp').oninput=upd;
+$('clr').onclick=()=>{$('inp').value='';upd();$('out').textContent='Результат появится тут'};
+$('paste').onclick=async()=>{try{$('inp').value=await navigator.clipboard.readText();upd()}catch(e){toast('Не удалось вставить автоматически: зажми поле и выбери «Вставить»')}};
+$('copy').onclick=async()=>{try{await navigator.clipboard.writeText($('out').textContent);$('copy').textContent='✓';setTimeout(()=>{$('copy').textContent='⧉'},1500)}catch(e){toast('Не удалось скопировать')}};
+let H=[];try{H=JSON.parse(localStorage.getItem('hist')||'[]')}catch(e){}
+function drawH(){const h=$('hist');h.innerHTML='';H.forEach(x=>{const b=document.createElement('button');b.className='tag';b.textContent=x;b.onclick=()=>{$('inp').value=x;upd()};h.appendChild(b)})}
+function saveH(v){v=(v||'').trim();if(!v)return;H=[v,...H.filter(x=>x!==v)].slice(0,5);try{localStorage.setItem('hist',JSON.stringify(H))}catch(e){}drawH()}
+drawH();
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
 const clog=$('clog');
 function cp(txt,c){const d=document.createElement('div');if(c)d.className=c;d.textContent=txt;clog.appendChild(d);clog.scrollTop=clog.scrollHeight}
 const fmt=v=>{try{return typeof v==='string'?v:typeof v==='function'?String(v):JSON.stringify(v,null,1)??String(v)}catch(e){return String(v)}};
